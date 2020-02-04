@@ -5,7 +5,7 @@ import styles from './styles';
 import { withStyles } from '@material-ui/core/styles';
 
 const ChatTextBoxComponet = props => {
-	const { classes } = props;
+	const { classes, submitMessageFn } = props;
 
 	const [state, setState] = useState({
 		chatText: '',
@@ -27,6 +27,7 @@ const ChatTextBoxComponet = props => {
 		if (messageValid(state.chatText)) {
 			document.getElementById('chattextbox').value = '';
 		}
+		submitMessageFn(state.chatText);
 		setState({
 			chatText: '',
 		});

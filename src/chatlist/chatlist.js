@@ -14,11 +14,9 @@ import NotificationImportant from '@material-ui/icons/NotificationImportant';
 import { withRouter } from 'react-router-dom';
 
 const ChatListComponent = props => {
-	const { classes, history, chats, selectChatFn, selectedChatIndex, userEmail } = props;
+	const { classes, history, chats, selectChatFn, selectedChatIndex, userEmail, newChatBtnFn } = props;
 
-	const newChat = () => {
-		console.log('new chat clicked');
-	};
+	const newChat = () => newChatBtnFn();
 
 	const selectChat = index => selectChatFn(index);
 
