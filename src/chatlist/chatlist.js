@@ -14,8 +14,56 @@ import NotificationImportant from '@material-ui/icons/NotificationImportant';
 import { withRouter } from 'react-router-dom';
 
 const ChatListComponent = props => {
-	const { classes, history } = props;
-	return <div>Chat list</div>;
+	const { classes, history, chats, selectChatFn, selectedChatIndex, userEmail } = props;
+
+	const newChat = () => {
+		console.log('new chat clicked');
+	};
+
+	const selectChat = index => selectChatFn(index);
+
+	return (
+		<main className={classes.root}>
+			<Button
+				color="primary"
+				variant="contained"
+				fullWidth
+				onClick={() => newChat()}
+				className={classes.newChatBtn}
+			>
+				New Message
+			</Button>
+			<List>
+				{chats.length > 0
+					? chats.map((_chat, _index) => (
+							<div key={_index}>
+								<ListItem
+									onClick={() => selectChat(_index)}
+									className={classes.listItem}
+									selected={selectedChatIndex === _index}
+									alignItems="flex-start"
+								>
+									<ListItemAvatar>
+										<Avatar alt="Remy Sharp">{_chat.sender[0]}</Avatar>
+									</ListItemAvatar>
+									<ListItemText
+										primary={_chat.sender}
+										secondary={
+											<React.Fragment>
+												<Typography component="span" color="textPrimary">
+													{_chat.message.substring(0, 30) + '...'}
+												</Typography>
+											</React.Fragment>
+										}
+									></ListItemText>
+								</ListItem>
+								<Divider></Divider>
+							</div>
+					  ))
+					: null}
+			</List>
+		</main>
+	);
 };
 
 export default withRouter(withStyles(styles)(ChatListComponent));

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 // import NewChatComponent from '../NewChat/newChat';
 
-// import ChatViewComponent from '../ChatView/chatView';
-// import ChatTextBoxComponent from '../ChatTextBox/chatTextBox';
+import ChatViewComponent from '../chatview/chatview';
+import ChatTextBoxComponent from '../chattextbox/chattextbox';
 import styles from './styles';
 import { Button, withStyles } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
@@ -10,7 +10,7 @@ import ChatListComponent from '../chatlist/chatlist';
 const firebase = require('firebase');
 
 const DashboardComponent = props => {
-	const { history } = props;
+	const { history, classes } = props;
 
 	const [state, setState] = useState({
 		selectedChat: null,
@@ -28,7 +28,14 @@ const DashboardComponent = props => {
 	};
 
 	const selectChat = chatIndex => {
-		console.log('selected a chat', chatIndex);
+		setState({
+			...state,
+			selectedChat: chatIndex,
+		});
+	};
+
+	const signOut = () => {
+		firebase.auth().signOut();
 	};
 
 	useEffect(() => {
@@ -41,18 +48,15 @@ const DashboardComponent = props => {
 					.collection('chats')
 					.where('users', 'array-contains', _user.email)
 					.onSnapshot(async res => {
-						console.log(res.docs);
-						// const chats = res.docs.map(_doc => _doc.data());
-						// await setState({ ...state, email: _user.email, chats });
+						const chats = res.docs.length > 0 ? res.docs.map(_doc => _doc.data())[0].messages : [];
+						await setState({ ...state, email: _user.email, chats });
 					});
-				console.log(state);
 			}
 		});
-	}, []);
+	}, [state.email]);
 
 	return (
 		<div>
-			Hello from DashboardComponent!
 			<ChatListComponent
 				newChatBtnFn={newChatBtnClicked}
 				selectChatFn={selectChat}
@@ -60,6 +64,11 @@ const DashboardComponent = props => {
 				userEmail={state.email}
 				selectedChatIndex={state.selectedChat}
 			/>
+			{state.newChatFormVisible ? null : <ChatViewComponent chats={state.chats} user={state.email} />}
+			{state.selectedChat ? <ChatTextBoxComponent /> : null}
+			<Button onClick={() => signOut()} className={classes.signOutBtn}>
+				Sign Out
+			</Button>
 		</div>
 	);
 };
